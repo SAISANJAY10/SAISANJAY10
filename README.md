@@ -1,122 +1,70 @@
-# EX.9 SIMULATION OF RSA ALGORITHM
+# EX.10 SIMULATION OF DIFFIE HELLMAN ALGORITHM
+
 
 ## AIM:
-To implement encryption and decryption using RSA algorithm.
+To implement key exchange between users using Diffie Hellman algorithm.
+
 
 ## ALGORITHM:
-•	Select 2 prime numbers p and q.
+•	Get the input for prime number p.
 
-•	Calculate n and pi(n).
+•	Calculate the primitive root of p that is g.
 
-•	Choose small number e.
+•	Calculate private keys for both users using p and g values.
 
-•	Calculate d.
+•	Similarly, secret keys for both users are calculated.
 
-•	Perform encryption and decryption and get the outputs correspondingly.
 
 
 ## PROGRAM:
 ~~~
-#include <stdio.h>
 #include <math.h>
-
-// Function to calculate greatest common divisor (GCD)
-int gcd(int a, int b) {
-    while (b != 0) {
-        int temp = b;
-        b = a % b;
-        a = temp;
-    }
+#include <stdio.h>
+// Power function to return value of a ^ b mod P
+long long int power(long long int a, long long int b,
+long long int P)
+{
+    if (b == 1)
     return a;
+    else
+    return (((long long int)pow(a, b)) % P);
 }
-
-// Function to calculate (base^exp) % mod using modular exponentiation
-int mod_exp(int base, int exp, int mod) {
-    int result = 1;
-    base = base % mod;
-    
-    while (exp > 0) {
-        if (exp % 2 == 1) {
-            result = (result * base) % mod;
-        }
-        exp = exp >> 1;  // exp = exp / 2
-        base = (base * base) % mod;
-    }
-    
-    return result;
-}
-
-// Function to find the modular inverse using Extended Euclidean Algorithm
-int mod_inverse(int e, int phi_n) {
-    int t = 0, new_t = 1;
-    int r = phi_n, new_r = e;
-    
-    while (new_r != 0) {
-        int quotient = r / new_r;
-        int temp_t = t;
-        t = new_t;
-        new_t = temp_t - quotient * new_t;
-        
-        int temp_r = r;
-        r = new_r;
-        new_r = temp_r - quotient * new_r;
-    }
-    
-    if (r > 1) return -1;  // No inverse
-    if (t < 0) t += phi_n;
-    
-    return t;
-}
-
-int main() {
-    int p, q, n, phi_n, e, d;
-    int message, encrypted_message, decrypted_message;
-    
-    printf("\n            *****Simulation of RSA Encryption and Decryption*****\n\n");
-    // Get two prime numbers from the user
-    printf("Enter a prime number (p): ");
-    scanf("%d", &p);
-    printf("Enter another prime number (q): ");
-    scanf("%d", &q);
-    
-    // Calculate n and phi(n)
-    n = p * q;
-    phi_n = (p - 1) * (q - 1);
-    
-    // Choose the public key exponent e such that 1 < e < phi_n and gcd(e, phi_n) = 1
-    do {
-        printf("Enter a value for public key exponent (e) such that 1 < e < %d: ", phi_n);
-        scanf("%d", &e);
-    } while (gcd(e, phi_n) != 1);
-    
-    // Calculate the private key exponent d (modular inverse of e)
-    d = mod_inverse(e, phi_n);
-    if (d == -1) {
-        printf("Modular inverse does not exist for the given 'e'. Exiting.\n");
-        return 1;
-    }
-    
-    printf("Public key: (n = %d, e = %d)\n", n, e);
-    printf("Private key: (n = %d, d = %d)\n", n, d);
-    
-    // Get the message to encrypt
-    printf("Enter the message to encrypt (as an integer): ");
-    scanf("%d", &message);
-    
-    // Encrypt the message: ciphertext = (message^e) % n
-    encrypted_message = mod_exp(message, e, n);
-    printf("Encrypted message: %d\n", encrypted_message);
-    
-    // Decrypt the message: decrypted_message = (ciphertext^d) % n
-    decrypted_message = mod_exp(encrypted_message, d, n);
-    printf("Decrypted message: %d\n", decrypted_message);
-    
+// Driver program
+int main()
+{
+    long long int P, G, x, a, y, b, ka, kb;
+    // Both the persons will be agreed upon the
+    // public keys G and P
+    printf("\n                  *****Diffie-Hellman Key Exchange algorithm*****\n\n");
+    printf("\n\nEnter the value of P: ");
+    scanf("%lld",&P); // A prime number P is taken
+    printf("The value of P: %lld\n", P);
+    printf("Enter the value of G (Primitive root of P): ");
+    scanf("%lld",&G); // A primitive root for P, G is taken
+    printf("The value of G: %lld\n\n", G);
+    // Alice will choose the private key a
+    a = 4; // a is the chosen private key
+    printf("The private key a for Alice : %lld\n", a);
+    x = power(G, a, P); // gets the generated key
+    // Bob will choose the private key b
+    b = 3; // b is the chosen private key
+    printf("The private key b for Bob : %lld\n\n", b);
+    y = power(G, b, P); // gets the generated key
+    // Generating the secret key after the exchange
+    // of keys
+    ka = power(y, a, P); // Secret key for Alice
+    kb = power(x, b, P); // Secret key for Bob
+    printf("Secret key for the Alice is : %lld\n", ka);
+    printf("Secret Key for the Bob is : %lld\n", kb);
     return 0;
 }
+
 ~~~
 
+
 ## OUTPUT:
-![image](https://github.com/user-attachments/assets/70cc4f5e-bb38-49a6-9151-90002e6f7083)
+![image](https://github.com/user-attachments/assets/0794075e-1b90-49f4-8080-0726925bb38a)
+
 
 ## RESULT:
-Hence, the simulation of RSA algorithm is successfully done.
+Hence, the simulation of Diffie Hellman algorithm is successfully done.
