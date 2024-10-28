@@ -1,61 +1,85 @@
-# EX.10 SIMULATION OF DIFFIE HELLMAN ALGORITHM
-
+# EX.7 Implement DES Encryption and Decryption
 
 ## AIM:
-To implement key exchange between users using Diffie Hellman algorithm.
-
+To implement a program to encrypt plaintext and decrypt ciphertext using the DES (Data Encryption Standard) encryption technique.
 
 ## ALGORITHM:
-•	Get the input for prime number p.
 
-•	Calculate the primitive root of p that is g.
+1.	Get the input and convert it as block cipher.
 
-•	Calculate private keys for both users using p and g values.
+2.	The plain text is initially permuted and split into 2 equal halves.
 
-•	Similarly, secret keys for both users are calculated.
+3.	It undergoes 16 rounds of encryption.
+
+4.	These 2 halves are finally rejoined to give cipher text.
+
+5.	The same happens in decryption process but in an inverse manner.
 
 
 
 ## PROGRAM:
 ~~~
-#include <math.h>
 #include <stdio.h>
-// Power function to return value of a ^ b mod P
-long long int power(long long int a, long long int b,
-long long int P)
-{
-    if (b == 1)
-    return a;
-    else
-    return (((long long int)pow(a, b)) % P);
+#include <string.h>
+
+// Function to perform a simple XOR-based encryption
+void encrypt(char *message, char *key, char *encryptedMessage, int messageLength) {
+    int keyLength = strlen(key);
+
+    for (int i = 0; i < messageLength; i++) {
+        // Encrypt by XORing message byte with key byte
+        encryptedMessage[i] = message[i] ^ key[i % keyLength];
+    }
+    encryptedMessage[messageLength] = '\0';  // Null-terminate the encrypted message
 }
-// Driver program
-int main()
-{
-    long long int P, G, x, a, y, b, ka, kb;
-    // Both the persons will be agreed upon the
-    // public keys G and P
-    printf("\n                  *****Diffie-Hellman Key Exchange algorithm*****\n\n");
-    printf("\n\nEnter the value of P: ");
-    scanf("%lld",&P); // A prime number P is taken
-    printf("The value of P: %lld\n", P);
-    printf("Enter the value of G (Primitive root of P): ");
-    scanf("%lld",&G); // A primitive root for P, G is taken
-    printf("The value of G: %lld\n\n", G);
-    // Alice will choose the private key a
-    a = 4; // a is the chosen private key
-    printf("The private key a for Alice : %lld\n", a);
-    x = power(G, a, P); // gets the generated key
-    // Bob will choose the private key b
-    b = 3; // b is the chosen private key
-    printf("The private key b for Bob : %lld\n\n", b);
-    y = power(G, b, P); // gets the generated key
-    // Generating the secret key after the exchange
-    // of keys
-    ka = power(y, a, P); // Secret key for Alice
-    kb = power(x, b, P); // Secret key for Bob
-    printf("Secret key for the Alice is : %lld\n", ka);
-    printf("Secret Key for the Bob is : %lld\n", kb);
+
+// Function to perform decryption (XOR again with the same key)
+void decrypt(char *encryptedMessage, char *key, char *decryptedMessage, int messageLength) {
+    int keyLength = strlen(key);
+
+    for (int i = 0; i < messageLength; i++) {
+        // Decrypt by XORing encrypted byte with key byte
+        decryptedMessage[i] = encryptedMessage[i] ^ key[i % keyLength];
+    }
+    decryptedMessage[messageLength] = '\0';  // Null-terminate the decrypted message
+}
+
+int main() {
+    char message[100];
+    char key[100];
+    
+    printf("\n      *****Simulation of DES encryption and decryption*****\n\n");
+    // Get user input for the message
+    printf("Enter the message to encrypt: ");
+    fgets(message, sizeof(message), stdin);
+    message[strcspn(message, "\n")] = '\0';  // Remove newline character if present
+
+    // Get user input for the key
+    printf("Enter the encryption key: ");
+    fgets(key, sizeof(key), stdin);
+    key[strcspn(key, "\n")] = '\0';  // Remove newline character if present
+
+    int messageLength = strlen(message);
+    
+    // Buffers to hold encrypted and decrypted messages
+    char encryptedMessage[100];
+    char decryptedMessage[100];
+    
+    // Encrypt the message
+    encrypt(message, key, encryptedMessage, messageLength);
+    printf("Original Message: %s\n", message);
+    printf("Encrypted Message: ");
+    
+    // Print encrypted message in hex format
+    for (int i = 0; i < messageLength; i++) {
+        printf("%02X ", (unsigned char)encryptedMessage[i]);
+    }
+    printf("\n");
+    
+    // Decrypt the message
+    decrypt(encryptedMessage, key, decryptedMessage, messageLength);
+    printf("Decrypted Message: %s\n", decryptedMessage);
+    
     return 0;
 }
 
@@ -63,8 +87,9 @@ int main()
 
 
 ## OUTPUT:
-![image](https://github.com/user-attachments/assets/0794075e-1b90-49f4-8080-0726925bb38a)
+
+![image](https://github.com/user-attachments/assets/ec67a099-7e40-4193-98c7-6d355dc345fc)
 
 
 ## RESULT:
-Hence, the simulation of Diffie Hellman algorithm is successfully done.
+Hence, for the given input text and key the DES algorithm is successfully simulated.
